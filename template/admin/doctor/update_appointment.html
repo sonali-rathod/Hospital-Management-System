@@ -1,0 +1,28 @@
+{% extends "admin/base/base.html" %}
+{% block content %}
+
+<h2 class="mb-4">Update Appointment</h2>
+
+<div class="card">
+  <div class="card-body">
+    <h5>Patient: {{ appointment.patient.user.first_name }} {{ appointment.patient.user.last_name }}</h5>
+    <p><strong>Date:</strong> {{ appointment.appointment_date }}</p>
+    <p><strong>Reason:</strong> {{ appointment.reason }}</p>
+    <p><strong>Status:</strong> {{ appointment.status }}</p>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="status">Update Status</label>
+        <select name="status" class="form-select">
+          <option value="Scheduled" {% if appointment.status == "Scheduled" %}selected{% endif %}>Scheduled</option>
+          <option value="Completed" {% if appointment.status == "Completed" %}selected{% endif %}>Completed</option>
+          <option value="Cancelled" {% if appointment.status == "Cancelled" %}selected{% endif %}>Cancelled</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary mt-3">Update</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

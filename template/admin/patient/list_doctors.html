@@ -1,0 +1,33 @@
+{% extends "admin/base/base.html" %}
+{% block content %}
+
+<h2 class="mt-4 mb-3">Available Doctors</h2>
+
+<table class="table table-bordered datatable">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Specialty</th>
+            <th>Phone</th>
+            <th>Availability</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for doctor in doctors %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>Dr. {{ doctor.user.first_name }} {{ doctor.user.last_name }}</td>
+            <td>{{ doctor.specialty }}</td>
+            <td>{{ doctor.phone }}</td>
+            <td>{{ doctor.availability }}</td>
+            <td>
+                <a href="{% url 'book_appointment' doctor.id %}" class="btn btn-primary btn-sm">Book Appointment</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

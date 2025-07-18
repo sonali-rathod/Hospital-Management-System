@@ -1,0 +1,9 @@
+<h2>All Doctors</h2>
+<ul>
+{% for d in doctors %}
+  <li>{{ d }}</li>
+{% empty %}
+  <li>No doctors added</li>
+{% endfor %}
+</ul>
+<a href="{% url 'add_doctor' %}">Add Doctor</a>

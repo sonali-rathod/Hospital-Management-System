@@ -1,0 +1,30 @@
+{% extends "admin/base/base.html" %}
+{% block content %}
+
+<h2 class="mt-4">Book Appointment with Dr. {{ doctor.user.first_name }} {{ doctor.user.last_name }}</h2>
+
+<form method="post" class="row g-3 needs-validation" novalidate>
+  {% csrf_token %}
+  
+  <div class="col-md-6">
+    <label class="form-label">Appointment Date</label>
+    {{ form.appointment_date|add_class:"form-control" }}
+    {% if form.appointment_date.errors %}
+      <div class="invalid-feedback d-block">{{ form.appointment_date.errors.0 }}</div>
+    {% endif %}
+  </div>
+
+  <div class="col-12">
+    <label class="form-label">Reason</label>
+    {{ form.reason|add_class:"form-control" }}
+    {% if form.reason.errors %}
+      <div class="invalid-feedback d-block">{{ form.reason.errors.0 }}</div>
+    {% endif %}
+  </div>
+
+  <div class="col-12">
+    <button type="submit" class="btn btn-success">Book Appointment</button>
+  </div>
+</form>
+
+{% endblock %}
