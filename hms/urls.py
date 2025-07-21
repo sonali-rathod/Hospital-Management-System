@@ -21,3 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("",include('app.urls')),
 ]
+handler404 = 'app.views.custom_404'
+handler500 = 'app.views.custom_500'
+handler403 = 'app.views.custom_403'
+handler400 = 'app.views.custom_400'

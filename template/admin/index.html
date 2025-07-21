@@ -4,6 +4,73 @@
     <main id="main" class="main">
       
 
+        <div class="pagetitle">
+          <h1>Dashboard</h1>
+          <nav>
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+              <li class="breadcrumb-item active">Dashboard</li>
+            </ol>
+          </nav>
+        </div><!-- End Page Title -->
+        {% if request.user.role == 2 %}
+        <section class="section">
+          <div class="row">
+            <div class="col-lg-12">
+        
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Appointments Assigned To You</h5>
+        
+                  {% if appointments %}
+                  <!-- Table with stripped rows -->
+                  <table class="table datatable">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Patient</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for a in appointments %}
+                      <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ a.appointment_date }}</td>
+                        <td>{{ a.patient.user.get_full_name }}</td>
+                        <td>{{ a.status }}</td>
+                        <td>
+                          {% if a.status == 'Scheduled' %}
+                          <form method="post" action="{% url 'users:update_appointment' a.id %}" class="d-flex align-items-center gap-2">
+                            {% csrf_token %}
+                            <select name="status" class="form-select form-select-sm" required>
+                              <option value="Completed">Complete</option>
+                              <option value="Cancelled">Cancel</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary btn-sm">Update</button>
+                          </form>
+                          {% else %}
+                          <span class="text-muted">No action</span>
+                          {% endif %}
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  <!-- End Table with stripped rows -->
+                  {% else %}
+                    <p>No appointments assigned.</p>
+                  {% endif %}
+        
+                </div>
+              </div>
+        
+            </div>
+          </div>
+        </section>
+        {% else %}
         <section class="section dashboard">
           <div class="row">
 
@@ -637,6 +704,9 @@
 
           </div>
         </section>
+        {% endif %}
+
+  
 
       </main><!-- End #main -->
       

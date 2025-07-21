@@ -1,5 +1,11 @@
 {% extends "admin/base/base.html" %}
 {% block content %}
+  <main id="main" class="main">
+    {% if request.user.role == 3 %}
+    
+    <a href="{% url 'users:add_doctor' %}" class="btn btn-primary">Add new Doctor</a>
+
+    {% endif %}
 
 <h2 class="mt-4 mb-3">Available Doctors</h2>
 
@@ -11,6 +17,7 @@
             <th>Specialty</th>
             <th>Phone</th>
             <th>Availability</th>
+
             <th>Actions</th>
         </tr>
     </thead>
@@ -23,11 +30,18 @@
             <td>{{ doctor.phone }}</td>
             <td>{{ doctor.availability }}</td>
             <td>
-                <a href="{% url 'book_appointment' doctor.id %}" class="btn btn-primary btn-sm">Book Appointment</a>
+                {% if request.user.role == 3  %}
+                <a href="{% url 'users:edit_doctor' doctor.pk %}" class="btn btn-sm btn-warning">Edit</a>
+              <a href="{% url 'users:delete_doctor' doctor.pk %}" class="btn btn-sm btn-danger">Delete</a>
+
+                {% elif request.user.role == 1 %}    
+                <a href="{% url 'users:book_appointment' doctor.id %}" class="btn btn-primary btn-sm">Book Appointment</a>
+            {% endif %}
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+  </main><!-- End #main -->
 
 {% endblock %}

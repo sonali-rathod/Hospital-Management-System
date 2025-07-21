@@ -1,0 +1,63 @@
+{% extends "admin/base/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">{{ title }}</h5>
+
+    <!-- Custom Styled Validation -->
+    <form class="row g-3 needs-validation" novalidate method="post">
+      {% csrf_token %}
+
+      <!-- User Form Fields -->
+      <div class="col-md-4">
+        <label for="id_first_name" class="form-label">First name</label>
+        {{ user_form.first_name|add_class:"form-control" }}
+      </div>
+
+      <div class="col-md-4">
+        <label for="id_last_name" class="form-label">Last name</label>
+        {{ user_form.last_name|add_class:"form-control" }}
+      </div>
+
+      <div class="col-md-4">
+        <label for="id_username" class="form-label">Username</label>
+        {{ user_form.username|add_class:"form-control" }}
+      </div>
+
+      <div class="col-md-6">
+        <label for="id_email" class="form-label">Email</label>
+        {{ user_form.email|add_class:"form-control" }}
+      </div>
+
+      <div class="col-md-6">
+        <label for="id_role" class="form-label">Role</label>
+        {{ user_form.role|add_class:"form-select" }}
+      </div>
+
+      <!-- Doctor Form Fields -->
+      <div class="col-md-6">
+        <label for="id_specialty" class="form-label">Specialty</label>
+        {{ doctor_form.specialty|add_class:"form-control" }}
+      </div>
+
+      <div class="col-md-6">
+        <label for="id_phone" class="form-label">Phone</label>
+        {{ doctor_form.phone|add_class:"form-control" }}
+      </div>
+
+      <div class="col-12">
+        <label for="id_availability" class="form-label">Availability</label>
+        {{ doctor_form.availability|add_class:"form-control" }}
+      </div>
+
+      <div class="col-12">
+        <button class="btn btn-primary" type="submit">Save Doctor</button>
+      </div>
+    </form>
+    <!-- End Custom Styled Validation -->
+
+  </div>
+</div>
+{% endblock content %}

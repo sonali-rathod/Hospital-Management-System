@@ -1,5 +1,8 @@
 {% extends "admin/base/base.html" %}
+{% load widget_tweaks %}
+
 {% block content %}
+<main id="main" class="main">
 
 <h2 class="mt-4">Book Appointment with Dr. {{ doctor.user.first_name }} {{ doctor.user.last_name }}</h2>
 
@@ -26,5 +29,5 @@
     <button type="submit" class="btn btn-success">Book Appointment</button>
   </div>
 </form>
-
+</main>
 {% endblock %}

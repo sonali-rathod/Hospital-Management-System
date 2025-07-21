@@ -1,19 +1,50 @@
-<h2>Appointments Assigned To You</h2>
-<ul>
-{% for a in appointments %}
-  <li>
-    {{ a.appointment_date }} with {{ a.patient }} – {{ a.status }}
-    {% if a.status == 'Scheduled' %}
-      <form method="post" action="{% url 'update_appointment' a.id %}">
-        {% csrf_token %}
-        <select name="status">
-          <option value="Completed">Complete</option>
-          <option value="Cancelled">Cancel</option>
-        </select>
-        <button>Update</button>
-      </form>
-    {% endif %}
-  </li>
-{% empty %}
-  <li>No appointments</li>
-{% endfor %}
+{% extends "admin/base/base.html" %}
+{% load static %}
+
+{% block content %}
+<main id="main" class="main">
+
+<h2 class="mt-4 mb-4">Appointments Assigned To You</h2>
+
+{% if appointments %}
+  <div class="row">
+    {% for a in appointments %}
+      <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Patient: {{ a.patient.user.get_full_name }}</h5>
+            <p class="card-text mb-1">
+              <strong>Date:</strong> {{ a.appointment_date }}
+            </p>
+            <p class="card-text mb-2">
+              <strong>Status:</strong>
+              <span class="badge {% if a.status == 'Scheduled' %}bg-warning text-dark{% elif a.status == 'Completed' %}bg-success{% else %}bg-danger{% endif %}">
+                {{ a.status }}
+              </span>
+            </p>
+
+            {% if a.status == 'Scheduled' %}
+              <form method="post" action="{% url 'update_appointment' a.id %}" class="d-flex flex-column gap-2">
+                {% csrf_token %}
+                <select name="status" class="form-select form-select-sm" required>
+                  <option value="" disabled selected>Update status</option>
+                  <option value="Completed">Complete</option>
+                  <option value="Cancelled">Cancel</option>
+                </select>
+                <button type="submit" class="btn btn-sm btn-primary">Update</button>
+              </form>
+            {% else %}
+              <p class="text-muted mt-3">No actions available.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="alert alert-info" role="alert">
+    No appointments assigned.
+  </div>
+{% endif %}
+</main>
+{% endblock %}

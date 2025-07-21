@@ -1,5 +1,131 @@
-<h2>Add Doctor</h2>
-<form method="post">{% csrf_token %}
-  {{ form.as_p }}
-  <button>Add</button>
-</form>
+{% include "admin/base/base.html" %}
+{% load static %}
+{% block content %}
+
+<main id="main" class="main">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">
+        {% if request.resolver_match.url_name == 'edit_doctor' %}
+          Edit Doctor
+        {% else %}
+          Add Doctor
+        {% endif %}
+      </h5>
+
+      <form method="post" class="row g-3 needs-validation" novalidate>
+        {% csrf_token %}
+
+        <!-- First Name -->
+        <div class="col-md-6">
+          <label for="id_first_name" class="form-label">First Name</label>
+          <input type="text" name="first_name" class="form-control {% if form.first_name.errors %}is-invalid{% endif %}" id="id_first_name" required value="{{ form.first_name.value|default_if_none:'' }}">
+          <div class="invalid-feedback">
+            {% if form.first_name.errors %}
+              {{ form.first_name.errors.0 }}
+            {% else %}
+              Please provide a first name.
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Last Name -->
+        <div class="col-md-6">
+          <label for="id_last_name" class="form-label">Last Name</label>
+          <input type="text" name="last_name" class="form-control {% if form.last_name.errors %}is-invalid{% endif %}" id="id_last_name" required value="{{ form.last_name.value|default_if_none:'' }}">
+          <div class="invalid-feedback">
+            {% if form.last_name.errors %}
+              {{ form.last_name.errors.0 }}
+            {% else %}
+              Please provide a last name.
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="col-md-6">
+          <label for="id_email" class="form-label">Email</label>
+          <input type="email" name="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" id="id_email" required value="{{ form.email.value|default_if_none:'' }}">
+          <div class="invalid-feedback">
+            {% if form.email.errors %}
+              {{ form.email.errors.0 }}
+            {% else %}
+              Please enter a valid email.
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Specialty -->
+        <div class="col-md-6">
+          <label for="id_specialty" class="form-label">Specialty</label>
+          <input type="text" name="specialty" class="form-control {% if form.specialty.errors %}is-invalid{% endif %}" id="id_specialty" required value="{{ form.specialty.value|default_if_none:'' }}">
+          <div class="invalid-feedback">
+            {% if form.specialty.errors %}
+              {{ form.specialty.errors.0 }}
+            {% else %}
+              Please enter a specialty.
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Phone -->
+        <div class="col-md-6">
+          <label for="id_phone" class="form-label">Phone</label>
+          <input type="text" name="phone" class="form-control {% if form.phone.errors %}is-invalid{% endif %}" id="id_phone" required value="{{ form.phone.value|default_if_none:'' }}">
+          <div class="invalid-feedback">
+            {% if form.phone.errors %}
+              {{ form.phone.errors.0 }}
+            {% else %}
+              Please provide a phone number.
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Availability -->
+        <div class="col-12">
+          <label for="id_availability" class="form-label">Availability</label>
+          <textarea name="availability" class="form-control {% if form.availability.errors %}is-invalid{% endif %}" id="id_availability" rows="3" required>{{ form.availability.value|default_if_none:'' }}</textarea>
+          <div class="invalid-feedback">
+            {% if form.availability.errors %}
+              {{ form.availability.errors.0 }}
+            {% else %}
+              Please describe the availability.
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="col-12">
+          <button class="btn btn-primary" type="submit">
+            {% if request.resolver_match.url_name == 'edit_doctor' %}
+              Update
+            {% else %}
+              Add
+            {% endif %} Doctor
+          </button>
+          <a href="{% url 'users:list_doctor' %}" class="btn btn-danger">Cancel</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</main>
+
+<!-- Optional: Bootstrap client-side validation (if enabled) -->
+<script>
+  (function () {
+    'use strict'
+    const forms = document.querySelectorAll('.needs-validation')
+    Array.from(forms).forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+        form.classList.add('was-validated')
+      }, false)
+    })
+  })()
+</script>
+
+{% endblock content %}

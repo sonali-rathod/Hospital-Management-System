@@ -1,7 +1,61 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, Appointment
+from .models import User, Appointment,Doctor
 
+from django import forms
+from django.contrib.auth import get_user_model
+from .models import Doctor
+
+
+class DoctorForm(forms.ModelForm):
+    first_name = forms.CharField(max_length=150)
+    last_name = forms.CharField(max_length=150)
+    email = forms.EmailField()
+
+    class Meta:
+        model = Doctor
+        fields = ['first_name', 'last_name', 'email', 'specialty', 'phone', 'availability']
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        # Prevent duplicates, but allow current user
+        if self.instance and self.instance.pk:
+            if User.objects.exclude(pk=self.instance.user.pk).filter(email=email).exists():
+                raise forms.ValidationError("Email already exists")
+        else:
+            if User.objects.filter(email=email).exists():
+                raise forms.ValidationError("Email already exists")
+        return email
+
+    def save(self, commit=True):
+        doctor = super().save(commit=False)
+        user_data = {
+            'email': self.cleaned_data['email'],
+            'first_name': self.cleaned_data['first_name'],
+            'last_name': self.cleaned_data['last_name'],
+        }
+
+        if not self.instance.pk:
+            # New doctor: create user
+            user = User.objects.create_user(
+                username=self.cleaned_data['email'],
+                email=self.cleaned_data['email'],
+                first_name=self.cleaned_data['first_name'],
+                last_name=self.cleaned_data['last_name'],
+                password=self.cleaned_data['email'],  # Or generate secure password
+                role=2
+            )
+            doctor.user = user
+        else:
+            # Update existing user
+            user = doctor.user
+            for key, value in user_data.items():
+                setattr(user, key, value)
+            user.save()
+
+        if commit:
+            doctor.save()
+        return doctor
 
 class RegisterForm(UserCreationForm):
     ROLE_CHOICES = (
@@ -48,33 +102,49 @@ class RegisterForm(UserCreationForm):
         return user
 
 
-# Doctor creation form (for admin)
-class DoctorForm(forms.Form):
-    first_name = forms.CharField(max_length=150)
-    last_name = forms.CharField(max_length=150)
-    email = forms.EmailField()
-    specialty = forms.CharField(max_length=100)
-    phone = forms.CharField(max_length=15)
-    availability = forms.CharField(widget=forms.Textarea)
 
-    def clean_email(self):
-        email = self.cleaned_data['email']
-        if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("Email already exists")
-        return email
+# class DoctorForm(forms.ModelForm):
+#     first_name = forms.CharField(max_length=150)
+#     last_name = forms.CharField(max_length=150)
+#     email = forms.EmailField()
 
-    def save_user(self):
-        # Create the User object for the doctor with random password (admin can reset)
-        user = User.objects.create_user(
-            username=self.cleaned_data['email'],
-            email=self.cleaned_data['email'],
-            first_name=self.cleaned_data['first_name'],
-            last_name=self.cleaned_data['last_name'],
-            password=User.objects.make_random_password(),
-            role=2  # Doctor role
-        )
-        return user
+#     class Meta:
+#         model = Doctor
+#         fields = ['first_name', 'last_name', 'email', 'specialty', 'phone', 'availability']
 
+#     def clean_email(self):
+#         email = self.cleaned_data['email']
+#         # Prevent duplicates when adding (but skip if updating)
+#         if self.instance and hasattr(self.instance, 'user'):
+#             if User.objects.exclude(pk=self.instance.user.pk).filter(email=email).exists():
+#                 raise forms.ValidationError("Email already exists")
+#         else:
+#             if User.objects.filter(email=email).exists():
+#                 raise forms.ValidationError("Email already exists")
+#         return email
+
+#     def save(self, commit=True):
+#         doctor = super().save(commit=False)
+#         if not self.instance.pk:  # only on create
+#             user = User.objects.create_user(
+#                 username=self.cleaned_data['email'],
+#                 email=self.cleaned_data['email'],
+#                 first_name=self.cleaned_data['first_name'],
+#                 last_name=self.cleaned_data['last_name'],
+#                 password=self.cleaned_data['email'],
+#                 role=2
+#             )
+#             doctor.user = user
+#         else:
+#             user = doctor.user
+#             user.first_name = self.cleaned_data['first_name']
+#             user.last_name = self.cleaned_data['last_name']
+#             user.email = self.cleaned_data['email']
+#             user.save()
+
+#         if commit:
+#             doctor.save()
+#         return doctor
 
 # Appointment form for booking
 class AppointmentForm(forms.ModelForm):
